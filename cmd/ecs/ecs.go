@@ -1,8 +1,6 @@
 package main
 
 import (
-	"os"
-
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 
@@ -10,58 +8,19 @@ import (
 	hwcecs "github.com/DesistDaydream/huaweicloud-openapi/pkg/ecs"
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/ecs/lifecycle"
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/huaweiclient"
+	"github.com/DesistDaydream/huaweicloud-openapi/pkg/logging"
 )
 
-// LogInit 日志功能初始化，若指定了 log-output 命令行标志，则将日志写入到文件中
-func LogInit(level, file, format string) error {
-	switch format {
-	case "text":
-		logrus.SetFormatter(&logrus.TextFormatter{
-			FullTimestamp:   true,
-			TimestampFormat: "2006-01-02 15:04:05",
-		})
-	case "json":
-		logrus.SetFormatter(&logrus.JSONFormatter{
-			TimestampFormat:   "2006-01-02 15:04:05",
-			DisableTimestamp:  false,
-			DisableHTMLEscape: false,
-			DataKey:           "",
-			// FieldMap:          map[logrus.fieldKey]string{},
-			// CallerPrettyfier: func(*runtime.Frame) (string, string) {},
-			PrettyPrint: false,
-		})
-	}
-
-	logLevel, err := logrus.ParseLevel(level)
-	if err != nil {
-		return err
-	}
-	logrus.SetLevel(logLevel)
-
-	if file != "" {
-		f, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE, 0755)
-		if err != nil {
-			return err
-		}
-		logrus.SetOutput(f)
-	}
-
-	return nil
-}
-
 func main() {
-	// operation := pflag.StringP("operation", "o", "", "操作类型: [add, list, batch]")
-	logLevel := pflag.String("log-level", "info", "日志级别:[debug, info, warn, error, fatal]")
-	logFile := pflag.String("log-output", "", "日志输出位置，不填默认标准输出 stdout")
-	logFormat := pflag.String("log-format", "text", "日志输出格式: [text, json]")
-
 	authFile := pflag.StringP("auth-file", "f", "auth.yaml", "认证信息文件")
-	userName := pflag.StringP("username", "u", "", "认证信息文件")
+	userName := pflag.StringP("username", "u", "", "用户名")
 	// 添加命令行标志
+	logFlags := logging.LoggingFlags{}
+	logFlags.AddFlags()
 	pflag.Parse()
 
 	// 初始化日志
-	if err := LogInit(*logLevel, *logFile, *logFormat); err != nil {
+	if err := logging.LogInit(logFlags.LogLevel, logFlags.LogOutput, logFlags.LogFormat); err != nil {
 		logrus.Fatal("set log level error")
 	}
 
