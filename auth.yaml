@@ -1,0 +1,4 @@
+authList:
+  ${USERNAME}:
+    accessKeyID: "XXXXXXXXXX"
+    secretAccessKey: "XXXXXXXXXX"
