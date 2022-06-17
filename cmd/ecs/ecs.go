@@ -32,7 +32,7 @@ func main() {
 	}
 
 	// 初始化账号Client
-	client, err := huaweiclient.CreateClient(auth.AuthList[*userName].AccessKeyID, auth.AuthList[*userName].SecretAccessKey)
+	client, err := huaweiclient.CreateEcsClient(auth.AuthList[*userName].AccessKeyID, auth.AuthList[*userName].SecretAccessKey)
 	if err != nil {
 		panic(err)
 	}
