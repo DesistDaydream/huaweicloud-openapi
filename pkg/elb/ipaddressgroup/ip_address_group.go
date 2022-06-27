@@ -54,12 +54,14 @@ func (v *ElbIPAddressGroup) UpdateAddressGroup(name string, id string, ipList []
 	}
 
 	// 手动确认是否执行
-	logrus.Infof("请确认是否要更新【%v】地址组，输入y/Y确认，输入其他键退出", name)
-	var input string
-	_, _ = fmt.Scanln(&input)
-	if input != "y" && input != "Y" {
-		logrus.Infoln("退出")
-		return
+	if !dryRun {
+		logrus.Infof("请确认是否要更新【%v】地址组，输入y/Y确认，输入其他键退出", name)
+		var input string
+		_, _ = fmt.Scanln(&input)
+		if input != "y" && input != "Y" {
+			logrus.Infoln("退出")
+			return
+		}
 	}
 
 	resp, err := v.ElbHandler.Client.UpdateIpGroup(request)

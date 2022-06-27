@@ -40,13 +40,16 @@ func (v *VpcIPAddressGroup) ListAddressGroup() {
 func (v *VpcIPAddressGroup) UpdateAddressGroup(name string, id string, ipset []string, dryRun bool) {
 	request := &model.UpdateAddressGroupRequest{}
 	request.AddressGroupId = id
-
 	request.Body = &model.UpdateAddressGroupRequestBody{
 		AddressGroup: &model.UpdateAddressGroupOption{
 			Name:  &name,
 			IpSet: &ipset,
 		},
 		DryRun: &dryRun,
+	}
+
+	for _, ip := range ipset {
+		logrus.WithField("ip", ip).Infoln("检查将要更新的 IP 地址")
 	}
 
 	// 如果 dryRun 为 false，则手动确认是否执行
@@ -63,7 +66,8 @@ func (v *VpcIPAddressGroup) UpdateAddressGroup(name string, id string, ipset []s
 	// 执行操作，更新地址组
 	resp, err := v.VpcHandler.Client.UpdateAddressGroup(request)
 	if err != nil {
-		logrus.Error(err)
+		logrus.Errorf("更新失败: %v", err)
+	} else {
+		logrus.Infoln("更新成功，任务ID：", *resp.RequestId)
 	}
-	logrus.Infoln(resp)
 }
