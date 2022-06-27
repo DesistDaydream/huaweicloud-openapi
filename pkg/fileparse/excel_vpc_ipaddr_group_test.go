@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func TestNewExcelData(t *testing.T) {
+func TestGetVpcIPaddrGroup(t *testing.T) {
 	type args struct {
 		file       string
 		domainName string
@@ -21,7 +21,7 @@ func TestNewExcelData(t *testing.T) {
 		{
 			name: "测试",
 			args: args{
-				file:       "VPC的IP地址组.xlsx",
+				file:       "../../ipaddr_group_for_vpc.xlsx",
 				domainName: "测试地址组",
 			},
 		},

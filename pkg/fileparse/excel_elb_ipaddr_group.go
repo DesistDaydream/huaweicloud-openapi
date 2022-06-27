@@ -1,11 +1,12 @@
 package fileparse
 
 import (
+	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/model"
 	"github.com/sirupsen/logrus"
 	"github.com/xuri/excelize/v2"
 )
 
-func GetVpcIPaddrGroup(file string, addrGroupName string) (ips []string, id string, err error) {
+func GetElbIPaddrGroup(file string, addrGroupName string) (ipList []model.UpadateIpGroupIpOption, id string, err error) {
 	f, err := excelize.OpenFile(file)
 	if err != nil {
 		logrus.Errorln(err)
@@ -36,13 +37,24 @@ func GetVpcIPaddrGroup(file string, addrGroupName string) (ips []string, id stri
 				"k":   k,
 				"row": row,
 			}).Debugf("检查每一条需要处理的解析记录")
-			// 将每一行中的的每列数据赋值到结构体重
 
-			ips = append(ips, row[0])
+			// 尝试获取第二列的值，如果没有，则赋值为空
+			var desc string
+			if len(row) > 1 {
+				desc = row[1]
+			} else {
+				desc = ""
+			}
+
+			// 将每一行中的的每列数据赋值到结构体重
+			ipList = append(ipList, model.UpadateIpGroupIpOption{
+				Ip:          row[0],
+				Description: &desc,
+			})
 		} else {
 			id = row[1]
 		}
 	}
 
-	return ips, id, nil
+	return ipList, id, nil
 }

@@ -12,11 +12,11 @@ import (
 )
 
 func main() {
-	authFile := pflag.StringP("auth-file", "f", "auth.yaml", "认证信息文件")
-	userName := pflag.StringP("username", "u", "", "用户名")
 	// 添加命令行标志
 	logFlags := logging.LoggingFlags{}
+	clientFlags := huaweiclient.ClientFlags{}
 	logFlags.AddFlags()
+	clientFlags.AddFlags()
 	pflag.Parse()
 
 	// 初始化日志
@@ -25,14 +25,18 @@ func main() {
 	}
 
 	// 获取认证信息
-	auth := config.NewAuthInfo(*authFile)
+	auth := config.NewAuthInfo(clientFlags.AuthFile)
 	// 判断传入的域名是否存在在认证信息中
-	if !auth.IsUserExist(*userName) {
-		logrus.Fatalf("认证信息中不存在 %v 用户, 请检查认证信息文件或命令行参数的值", *userName)
+	if !auth.IsUserExist(clientFlags.UserName) {
+		logrus.Fatalf("认证信息中不存在 %v 用户, 请检查认证信息文件或命令行参数的值", clientFlags.UserName)
 	}
 
 	// 初始化账号Client
-	client, err := huaweiclient.CreateEcsClient(auth.AuthList[*userName].AccessKeyID, auth.AuthList[*userName].SecretAccessKey)
+	client, err := huaweiclient.CreateEcsClient(
+		auth.AuthList[clientFlags.UserName].AccessKeyID,
+		auth.AuthList[clientFlags.UserName].SecretAccessKey,
+		clientFlags.Region,
+	)
 	if err != nil {
 		panic(err)
 	}

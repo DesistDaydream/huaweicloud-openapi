@@ -20,15 +20,23 @@ func NewVpcIPADdressGroup(ecsHandler *hwcvpc.VpcHandler) *VpcIPAddressGroup {
 	}
 }
 
+// 列出所有 IP 地址组
 func (v *VpcIPAddressGroup) ListAddressGroup() {
 	request := &model.ListAddressGroupRequest{}
 	response, err := v.VpcHandler.Client.ListAddressGroup(request)
 	if err != nil {
 		logrus.Infoln(err)
 	}
-	logrus.Infoln(response)
+	logrus.Infof("当前共有 %v 个 IP 地址组", response.PageInfo.CurrentCount)
+	for _, ag := range *response.AddressGroups {
+		logrus.Infof("【%v】地址组地址列表：", ag.Name)
+		for _, ip := range ag.IpSet {
+			fmt.Println(ip)
+		}
+	}
 }
 
+// 全量更新 IP 地址组(若 IP 地址组中存在 Excel 中不存在的 IP 地址，则删除)
 func (v *VpcIPAddressGroup) UpdateAddressGroup(name string, id string, ipset []string, dryRun bool) {
 	request := &model.UpdateAddressGroupRequest{}
 	request.AddressGroupId = id
@@ -53,9 +61,9 @@ func (v *VpcIPAddressGroup) UpdateAddressGroup(name string, id string, ipset []s
 	}
 
 	// 执行操作，更新地址组
-	response, err := v.VpcHandler.Client.UpdateAddressGroup(request)
+	resp, err := v.VpcHandler.Client.UpdateAddressGroup(request)
 	if err != nil {
 		logrus.Error(err)
 	}
-	logrus.Infoln(response)
+	logrus.Infoln(resp)
 }

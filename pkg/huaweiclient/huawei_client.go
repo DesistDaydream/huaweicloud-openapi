@@ -3,9 +3,11 @@ package huaweiclient
 import (
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
 	ecs "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/ecs/v2"
-	regionv2 "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/ecs/v2/region"
+	ecsregionv2 "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/ecs/v2/region"
+	elb "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3"
+	elbregionv3 "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/region"
 	vpc "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/vpc/v3"
-	regionv3 "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/vpc/v3/region"
+	vpcregionv3 "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/vpc/v3/region"
 	"github.com/spf13/pflag"
 )
 
@@ -13,19 +15,27 @@ import (
 type ClientFlags struct {
 	AuthFile string
 	UserName string
+	Region   string
 }
 
 // 添加命令行标志
 func (c *ClientFlags) AddFlags() {
 	pflag.StringVarP(&c.AuthFile, "auth-file", "f", "auth.yaml", "认证信息文件")
 	pflag.StringVarP(&c.UserName, "username", "u", "", "用户名")
+	pflag.StringVarP(&c.Region, "region", "r", "cn-southwest-2", "地域")
 }
 
 // 创建控制 ECS 的客户端
-func CreateEcsClient(ak, sk string) (*ecs.EcsClient, error) {
-	auth := basic.NewCredentialsBuilder().WithAk(ak).WithSk(sk).Build()
+func CreateEcsClient(ak, sk, region string) (*ecs.EcsClient, error) {
+	auth := basic.NewCredentialsBuilder().
+		WithAk(ak).
+		WithSk(sk).
+		Build()
 
-	hcClient := ecs.EcsClientBuilder().WithRegion(regionv2.ValueOf("cn-southwest-2")).WithCredential(auth).Build()
+	hcClient := ecs.EcsClientBuilder().
+		WithRegion(ecsregionv2.ValueOf(region)).
+		WithCredential(auth).
+		Build()
 
 	client := ecs.NewEcsClient(hcClient)
 
@@ -33,11 +43,31 @@ func CreateEcsClient(ak, sk string) (*ecs.EcsClient, error) {
 }
 
 // 创建控制 VPC 的客户端
-func CreateVpcClient(ak, sk string) (*vpc.VpcClient, error) {
-	auth := basic.NewCredentialsBuilder().WithAk(ak).WithSk(sk).Build()
+func CreateVpcClient(ak, sk, region string) (*vpc.VpcClient, error) {
+	auth := basic.NewCredentialsBuilder().
+		WithAk(ak).
+		WithSk(sk).
+		Build()
 
 	client := vpc.NewVpcClient(vpc.VpcClientBuilder().
-		WithRegion(regionv3.ValueOf("cn-southwest-2")).
-		WithCredential(auth).Build())
+		WithRegion(vpcregionv3.ValueOf(region)).
+		WithCredential(auth).
+		Build())
+
+	return client, nil
+}
+
+// 创建控制 ELB 的客户端
+func CreateElbClient(ak, sk, region string) (*elb.ElbClient, error) {
+	auth := basic.NewCredentialsBuilder().
+		WithAk(ak).
+		WithSk(sk).
+		Build()
+
+	client := elb.NewElbClient(elb.ElbClientBuilder().
+		WithRegion(elbregionv3.ValueOf(region)).
+		WithCredential(auth).
+		Build())
+
 	return client, nil
 }

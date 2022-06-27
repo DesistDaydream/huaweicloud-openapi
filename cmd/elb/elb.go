@@ -7,11 +7,11 @@ import (
 	"github.com/spf13/pflag"
 
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/config"
+	hwcelb "github.com/DesistDaydream/huaweicloud-openapi/pkg/elb"
+	"github.com/DesistDaydream/huaweicloud-openapi/pkg/elb/ipaddressgroup"
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/fileparse"
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/huaweiclient"
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/logging"
-	hwcvpc "github.com/DesistDaydream/huaweicloud-openapi/pkg/vpc"
-	"github.com/DesistDaydream/huaweicloud-openapi/pkg/vpc/ipaddressgroup"
 )
 
 func main() {
@@ -19,6 +19,7 @@ func main() {
 	operation := pflag.StringP("operation", "o", "", "操作类型: [list, update]")
 	ipsFile := pflag.StringP("excel", "e", "ipaddr_group.xlsx", "存有 IP 地址组的文件")
 	addrGroupName := pflag.StringP("addr-group-name", "n", "测试地址组", "地址组名称")
+	// TODO: ELB 的 API 没有 dryRun 功能，这是从 VPC 的 API 直接拷贝过来的
 	// 功能说明：是否只预检此次请求
 	// 取值范围：
 	// -true：发送检查请求，不会更新地址组内容。检查项包括是否填写了必需参数、请求格式、业务限制。如果检查不通过，则返回对应错误。如果检查通过，则返回响应码202。
@@ -49,7 +50,7 @@ func main() {
 	}
 
 	// 初始化账号Client
-	client, err := huaweiclient.CreateVpcClient(
+	client, err := huaweiclient.CreateElbClient(
 		auth.AuthList[clientFlags.UserName].AccessKeyID,
 		auth.AuthList[clientFlags.UserName].SecretAccessKey,
 		clientFlags.Region,
@@ -58,20 +59,20 @@ func main() {
 		panic(err)
 	}
 
-	// 实例化 VPC 的 API 处理器
-	h := hwcvpc.NewVpcHandler(client)
+	// 实例化 ELB 的 API 处理器
+	h := hwcelb.NewElbHandler(client)
 
-	v := ipaddressgroup.NewVpcIPADdressGroup(h)
+	e := ipaddressgroup.NewElbIPAddressGroup(h)
 	// 执行操作
 	switch *operation {
 	case "list":
-		v.ListAddressGroup()
+		e.ListAddressGroup()
 	case "update":
-		ipset, id, err := fileparse.GetVpcIPaddrGroup(*ipsFile, *addrGroupName)
+		ipset, id, err := fileparse.GetElbIPaddrGroup(*ipsFile, *addrGroupName)
 		if err != nil {
 			logrus.Fatalf("解析文件失败: %v", err)
 		}
-		v.UpdateAddressGroup(*addrGroupName, id, ipset, *dryRun)
+		e.UpdateAddressGroup(*addrGroupName, id, ipset, *dryRun)
 	default:
 		logrus.Fatalln("操作类型不存在，请使用 -o 指定操作类型")
 	}
