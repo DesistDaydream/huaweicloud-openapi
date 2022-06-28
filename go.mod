@@ -3,14 +3,16 @@ module github.com/DesistDaydream/huaweicloud-openapi
 go 1.18
 
 require (
-	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.0.92
+	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.0.95
 	github.com/sirupsen/logrus v1.8.1
+	github.com/spf13/cobra v1.5.0
 	github.com/spf13/pflag v1.0.5
 	github.com/xuri/excelize/v2 v2.6.0
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742 // indirect

@@ -1,6 +1,7 @@
 package logging
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -23,6 +24,7 @@ func (flags *LoggingFlags) AddFlags() {
 
 // LogInit 日志功能初始化，若指定了 log-output 命令行标志，则将日志写入到文件中
 func LogInit(level, file, format string) error {
+	fmt.Println("日志初始化")
 	switch format {
 	case "text":
 		logrus.SetFormatter(&logrus.TextFormatter{

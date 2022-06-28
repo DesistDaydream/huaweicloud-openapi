@@ -21,7 +21,7 @@ func main() {
 
 	// 初始化日志
 	if err := logging.LogInit(logFlags.LogLevel, logFlags.LogOutput, logFlags.LogFormat); err != nil {
-		logrus.Fatal("set log level error")
+		logrus.Fatal("初始化日志失败", err)
 	}
 
 	// 获取认证信息
