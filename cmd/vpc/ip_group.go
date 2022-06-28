@@ -11,7 +11,6 @@ import (
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/fileparse"
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/huaweiclient"
 	hwcvpc "github.com/DesistDaydream/huaweicloud-openapi/pkg/vpc"
-	"github.com/DesistDaydream/huaweicloud-openapi/pkg/vpc/ipaddressgroup"
 )
 
 func CreateIPGroupCommand() *cobra.Command {
@@ -75,7 +74,7 @@ func runIPGroup(cmd *cobra.Command, args []string) {
 	// 实例化 VPC 的 API 处理器
 	h := hwcvpc.NewVpcHandler(client)
 
-	v := ipaddressgroup.NewVpcIPADdressGroup(h)
+	v := hwcvpc.NewVpcIPADdressGroup(h)
 	// 执行操作
 	switch operation {
 	case "list":

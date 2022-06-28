@@ -1,4 +1,4 @@
-package ecs
+package vpc
 
 import (
 	vpc "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/vpc/v3"

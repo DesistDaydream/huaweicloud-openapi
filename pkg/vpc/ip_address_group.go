@@ -1,20 +1,19 @@
-package ipaddressgroup
+package vpc
 
 import (
 	"fmt"
 
-	hwcvpc "github.com/DesistDaydream/huaweicloud-openapi/pkg/vpc"
 	"github.com/sirupsen/logrus"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/vpc/v3/model"
 )
 
 type VpcIPAddressGroup struct {
-	VpcHandler       *hwcvpc.VpcHandler
+	VpcHandler       *VpcHandler
 	AddressGroupName string
 }
 
-func NewVpcIPADdressGroup(ecsHandler *hwcvpc.VpcHandler) *VpcIPAddressGroup {
+func NewVpcIPADdressGroup(ecsHandler *VpcHandler) *VpcIPAddressGroup {
 	return &VpcIPAddressGroup{
 		VpcHandler: ecsHandler,
 	}
@@ -23,12 +22,12 @@ func NewVpcIPADdressGroup(ecsHandler *hwcvpc.VpcHandler) *VpcIPAddressGroup {
 // 列出所有 IP 地址组
 func (v *VpcIPAddressGroup) ListAddressGroup() {
 	request := &model.ListAddressGroupRequest{}
-	response, err := v.VpcHandler.Client.ListAddressGroup(request)
+	resp, err := v.VpcHandler.Client.ListAddressGroup(request)
 	if err != nil {
-		logrus.Infoln(err)
+		logrus.Errorln(err)
 	}
-	logrus.Infof("当前共有 %v 个 IP 地址组", response.PageInfo.CurrentCount)
-	for _, ag := range *response.AddressGroups {
+	logrus.Infof("当前共有 %v 个 IP 地址组", resp.PageInfo.CurrentCount)
+	for _, ag := range *resp.AddressGroups {
 		logrus.Infof("【%v】地址组地址列表：", ag.Name)
 		for _, ip := range ag.IpSet {
 			fmt.Println(ip)
