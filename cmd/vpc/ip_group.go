@@ -20,7 +20,7 @@ func CreateIPGroupCommand() *cobra.Command {
 		Short: "A brief description of your command",
 		Long:  `A longer description that spans multiple lines and likely contains examples`,
 		Run: func(cmd *cobra.Command, args []string) {
-			run(cmd, args)
+			runIPGroup(cmd, args)
 		},
 		Args: cobra.NoArgs,
 	}
@@ -37,8 +37,7 @@ func CreateIPGroupCommand() *cobra.Command {
 	return IPGroupCmd
 }
 
-func run(cmd *cobra.Command, args []string) {
-	logrus.Println(args)
+func runIPGroup(cmd *cobra.Command, args []string) {
 	// 获取全部命令行标志
 	operation, _ := cmd.Flags().GetString("operation")
 	ipsFile, _ := cmd.Flags().GetString("excel")

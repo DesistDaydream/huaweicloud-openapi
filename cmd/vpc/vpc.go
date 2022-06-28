@@ -14,6 +14,7 @@ func CreateCommand() *cobra.Command {
 
 	VpcCmd.AddCommand(
 		CreateIPGroupCommand(),
+		CreateSecurityGroupCommand(),
 	)
 
 	return VpcCmd
