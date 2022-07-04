@@ -10,11 +10,11 @@ import (
 )
 
 type ElbIPAddressGroup struct {
-	ElbHandler       *hwcelb.ElbHandler
+	ElbHandler       *hwcelb.ElbClient
 	AddressGroupName string
 }
 
-func NewElbIPAddressGroup(elbHandler *hwcelb.ElbHandler) *ElbIPAddressGroup {
+func NewElbIPAddressGroup(elbHandler *hwcelb.ElbClient) *ElbIPAddressGroup {
 	return &ElbIPAddressGroup{
 		ElbHandler: elbHandler,
 	}

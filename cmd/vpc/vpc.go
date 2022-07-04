@@ -16,7 +16,7 @@ func CreateCommand() *cobra.Command {
 	VpcCmd := &cobra.Command{
 		Use:              "vpc",
 		Short:            "控制 VPC 资源",
-		PersistentPreRun: persistentPreRun,
+		PersistentPreRun: vpcPersistentPreRun,
 	}
 
 	VpcCmd.AddCommand(
@@ -27,7 +27,7 @@ func CreateCommand() *cobra.Command {
 	return VpcCmd
 }
 
-func persistentPreRun(cmd *cobra.Command, args []string) {
+func vpcPersistentPreRun(cmd *cobra.Command, args []string) {
 	LogLevel, _ := cmd.Flags().GetString("log-level")
 	LogOutput, _ := cmd.Flags().GetString("log-output")
 	LogFormat, _ := cmd.Flags().GetString("log-format")

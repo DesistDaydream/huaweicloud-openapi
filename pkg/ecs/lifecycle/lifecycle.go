@@ -9,10 +9,10 @@ import (
 )
 
 type EcsLifecycle struct {
-	EcsHandler *hwcecs.EcsHandler
+	EcsHandler *hwcecs.EcsClient
 }
 
-func NewEcsLifecycle(ecsHandler *hwcecs.EcsHandler) *EcsLifecycle {
+func NewEcsLifecycle(ecsHandler *hwcecs.EcsClient) *EcsLifecycle {
 	return &EcsLifecycle{
 		EcsHandler: ecsHandler,
 	}

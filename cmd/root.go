@@ -7,8 +7,11 @@ package cmd
 import (
 	"os"
 
+	"github.com/DesistDaydream/huaweicloud-openapi/cmd/ecs"
 	"github.com/DesistDaydream/huaweicloud-openapi/cmd/elb"
 	"github.com/DesistDaydream/huaweicloud-openapi/cmd/vpc"
+	"github.com/DesistDaydream/huaweicloud-openapi/pkg/logging"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -28,20 +31,10 @@ https://developer.huaweicloud.com/openapilist
 API 在线调试：https://apiexplorer.developer.huaweicloud.com/apiexplorer/overview`
 
 	var rootCmd = &cobra.Command{
-		Use:   "huaweicloud-openapi",
-		Short: "通过华为云 OpenAPI 管理资源的工具",
-		Long:  long,
-		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			// TODO: 这里为什么不执行？Cobra 的 Bug？还是还有别的机制需要触发这里的逻辑
-			// LogLevel, _ := cmd.Flags().GetString("log-level")
-			// LogOutput, _ := cmd.Flags().GetString("log-output")
-			// LogFormat, _ := cmd.Flags().GetString("log-format")
-			// if err := logging.LogInit(LogLevel, LogOutput, LogFormat); err != nil {
-			// 	logrus.Fatal("初始化日志失败", err)
-			// TODO: 认证信息文件处理的相关逻辑写在这里
-			//
-			// }
-		},
+		Use:              "huaweicloud-openapi",
+		Short:            "通过华为云 OpenAPI 管理资源的工具",
+		Long:             long,
+		PersistentPreRun: rootPersistentPreRun,
 	}
 
 	rootCmd.PersistentFlags().StringP("log-level", "", "info", "日志级别:[debug, info, warn, error, fatal]")
@@ -56,8 +49,19 @@ API 在线调试：https://apiexplorer.developer.huaweicloud.com/apiexplorer/ove
 	rootCmd.AddCommand(
 		vpc.CreateCommand(),
 		elb.CreateCommand(),
-		// ecs.CreateCommand(),
+		ecs.CreateCommand(),
 	)
 
 	return rootCmd
+}
+
+func rootPersistentPreRun(cmd *cobra.Command, args []string) {
+	// TODO: 这里为什么不执行？Cobra 的 Bug？还是还有别的机制需要触发这里的逻辑
+	LogLevel, _ := cmd.Flags().GetString("log-level")
+	LogOutput, _ := cmd.Flags().GetString("log-output")
+	LogFormat, _ := cmd.Flags().GetString("log-format")
+	if err := logging.LogInit(LogLevel, LogOutput, LogFormat); err != nil {
+		logrus.Fatal("初始化日志失败", err)
+		// TODO: 认证信息文件处理的相关逻辑写在这里
+	}
 }
