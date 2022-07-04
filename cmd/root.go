@@ -39,6 +39,7 @@ API 在线调试：https://apiexplorer.developer.huaweicloud.com/apiexplorer/ove
 			if err := logging.LogInit(LogLevel, LogOutput, LogFormat); err != nil {
 				logrus.Fatal("初始化日志失败", err)
 			}
+			// TODO: 认证信息文件处理的相关逻辑写在这里
 		},
 	}
 
