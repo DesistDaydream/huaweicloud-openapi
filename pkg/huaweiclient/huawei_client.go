@@ -6,10 +6,17 @@ import (
 	ecsregionv2 "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/ecs/v2/region"
 	elb "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3"
 	elbregionv3 "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/region"
-	vpc "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/vpc/v3"
-	vpcregionv3 "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/vpc/v3/region"
+
 	"github.com/spf13/pflag"
 )
+
+type ClientInfo struct {
+	AK     string
+	SK     string
+	Region string
+}
+
+var Info *ClientInfo
 
 // 创建客户端命令行标志
 type ClientFlags struct {
@@ -38,21 +45,6 @@ func CreateEcsClient(ak, sk, region string) (*ecs.EcsClient, error) {
 		Build()
 
 	client := ecs.NewEcsClient(hcClient)
-
-	return client, nil
-}
-
-// 创建控制 VPC 的客户端
-func CreateVpcClient(ak, sk, region string) (*vpc.VpcClient, error) {
-	auth := basic.NewCredentialsBuilder().
-		WithAk(ak).
-		WithSk(sk).
-		Build()
-
-	client := vpc.NewVpcClient(vpc.VpcClientBuilder().
-		WithRegion(vpcregionv3.ValueOf(region)).
-		WithCredential(auth).
-		Build())
 
 	return client, nil
 }

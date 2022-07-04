@@ -18,10 +18,8 @@ func CreateIPGroupCommand() *cobra.Command {
 		Use:   "ipGroup",
 		Short: "A brief description of your command",
 		Long:  `A longer description that spans multiple lines and likely contains examples`,
-		Run: func(cmd *cobra.Command, args []string) {
-			run(cmd, args)
-		},
-		Args: cobra.NoArgs,
+		Run:   runIPGroup,
+		Args:  cobra.NoArgs,
 	}
 
 	IPGroupCmd.PersistentFlags().StringP("operation", "o", "list", "操作类型: [list, update]")
@@ -36,7 +34,7 @@ func CreateIPGroupCommand() *cobra.Command {
 	return IPGroupCmd
 }
 
-func run(cmd *cobra.Command, args []string) {
+func runIPGroup(cmd *cobra.Command, args []string) {
 	// 获取全部命令行标志
 	operation, _ := cmd.Flags().GetString("operation")
 	ipsFile, _ := cmd.Flags().GetString("excel")

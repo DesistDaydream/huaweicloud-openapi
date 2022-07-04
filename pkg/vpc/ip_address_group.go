@@ -9,20 +9,20 @@ import (
 )
 
 type VpcIPAddressGroup struct {
-	VpcHandler       *VpcHandler
+	VpcClient        *VpcClient
 	AddressGroupName string
 }
 
-func NewVpcIPADdressGroup(ecsHandler *VpcHandler) *VpcIPAddressGroup {
+func NewVpcIPADdressGroup(vpcClient *VpcClient) *VpcIPAddressGroup {
 	return &VpcIPAddressGroup{
-		VpcHandler: ecsHandler,
+		VpcClient: vpcClient,
 	}
 }
 
 // 列出所有 IP 地址组
 func (v *VpcIPAddressGroup) ListAddressGroup() {
 	request := &model.ListAddressGroupRequest{}
-	resp, err := v.VpcHandler.Client.ListAddressGroup(request)
+	resp, err := v.VpcClient.Client.ListAddressGroup(request)
 	if err != nil {
 		logrus.Errorln(err)
 	}
@@ -63,7 +63,7 @@ func (v *VpcIPAddressGroup) UpdateAddressGroup(name string, id string, ipset []s
 	}
 
 	// 执行操作，更新地址组
-	resp, err := v.VpcHandler.Client.UpdateAddressGroup(request)
+	resp, err := v.VpcClient.Client.UpdateAddressGroup(request)
 	if err != nil {
 		logrus.Errorf("更新失败: %v", err)
 	} else {

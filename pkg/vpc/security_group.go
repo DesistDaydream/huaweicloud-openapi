@@ -6,13 +6,13 @@ import (
 )
 
 type VpcSecurityGroup struct {
-	VpcHandler        *VpcHandler
+	VpcClient         *VpcClient
 	SecurityGroupName string
 }
 
-func NewVpcSecurityGroup(ecsHandler *VpcHandler) *VpcSecurityGroup {
+func NewVpcSecurityGroup(vpcClient *VpcClient) *VpcSecurityGroup {
 	return &VpcSecurityGroup{
-		VpcHandler: ecsHandler,
+		VpcClient: vpcClient,
 	}
 }
 
@@ -20,7 +20,7 @@ func NewVpcSecurityGroup(ecsHandler *VpcHandler) *VpcSecurityGroup {
 func (v *VpcSecurityGroup) ShowSecurityGroup(id string) (*[]model.SecurityGroupRule, error) {
 	request := &model.ShowSecurityGroupRequest{}
 	request.SecurityGroupId = id
-	resp, err := v.VpcHandler.Client.ShowSecurityGroup(request)
+	resp, err := v.VpcClient.Client.ShowSecurityGroup(request)
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +30,7 @@ func (v *VpcSecurityGroup) ShowSecurityGroup(id string) (*[]model.SecurityGroupR
 // 列出所有安全组
 func (v *VpcSecurityGroup) ListSecurityGroup() (*[]model.SecurityGroup, error) {
 	request := &model.ListSecurityGroupsRequest{}
-	resp, err := v.VpcHandler.Client.ListSecurityGroups(request)
+	resp, err := v.VpcClient.Client.ListSecurityGroups(request)
 	if err != nil {
 		return nil, err
 	}

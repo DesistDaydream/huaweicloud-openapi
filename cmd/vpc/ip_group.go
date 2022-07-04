@@ -1,16 +1,12 @@
 package vpc
 
 import (
-	"os"
-
 	"github.com/spf13/cobra"
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/DesistDaydream/huaweicloud-openapi/pkg/config"
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/fileparse"
-	"github.com/DesistDaydream/huaweicloud-openapi/pkg/huaweiclient"
-	hwcvpc "github.com/DesistDaydream/huaweicloud-openapi/pkg/vpc"
+	"github.com/DesistDaydream/huaweicloud-openapi/pkg/vpc"
 )
 
 func CreateIPGroupCommand() *cobra.Command {
@@ -18,20 +14,17 @@ func CreateIPGroupCommand() *cobra.Command {
 		Use:   "ipGroup",
 		Short: "A brief description of your command",
 		Long:  `A longer description that spans multiple lines and likely contains examples`,
-		Run: func(cmd *cobra.Command, args []string) {
-			runIPGroup(cmd, args)
-		},
-		Args: cobra.NoArgs,
+		Run:   runIPGroup,
 	}
 
-	IPGroupCmd.PersistentFlags().StringP("operation", "o", "list", "操作类型: [list, update]")
-	IPGroupCmd.PersistentFlags().StringP("excel", "e", "ipaddr_group_for_vpc.xlsx", "存有 IP 地址组的文件")
-	IPGroupCmd.PersistentFlags().StringP("addr-group-name", "n", "测试地址组", "地址组名称")
+	IPGroupCmd.Flags().StringP("operation", "o", "list", "操作类型: [list, update]")
+	IPGroupCmd.Flags().StringP("excel", "e", "ipaddr_group_for_vpc.xlsx", "存有 IP 地址组的文件")
+	IPGroupCmd.Flags().StringP("addr-group-name", "n", "测试地址组", "地址组名称")
 	// 功能说明：是否只预检此次请求
 	// 取值范围：
 	// -true：发送检查请求，不会更新地址组内容。检查项包括是否填写了必需参数、请求格式、业务限制。如果检查不通过，则返回对应错误。如果检查通过，则返回响应码202。
 	// -false（默认值）：发送正常请求，并直接更新地址组。
-	IPGroupCmd.PersistentFlags().BoolP("dry-run", "d", false, "是否真实执行操作")
+	IPGroupCmd.Flags().BoolP("dry-run", "d", false, "是否真实执行操作")
 
 	return IPGroupCmd
 }
@@ -42,39 +35,10 @@ func runIPGroup(cmd *cobra.Command, args []string) {
 	ipsFile, _ := cmd.Flags().GetString("excel")
 	addrGroupName, _ := cmd.Flags().GetString("addr-group-name")
 	dryRun, _ := cmd.Flags().GetBool("dry-run")
-	authFile, _ := cmd.Flags().GetString("auth-file")
-	userName, err := cmd.Flags().GetString("username")
-	if err != nil {
-		logrus.Fatalln("请指定用户名")
-	}
-	region, _ := cmd.Flags().GetString("region")
-
-	// 检查 clientFlags.AuthFile 文件是否存在
-	if _, err := os.Stat(authFile); os.IsNotExist(err) {
-		logrus.Fatal("文件不存在")
-	}
-	// 获取认证信息
-	auth := config.NewAuthInfo(authFile)
-
-	// 判断传入的域名是否存在在认证信息中
-	if !auth.IsUserExist(userName) {
-		logrus.Fatalf("认证信息中不存在 %v 用户, 请检查认证信息文件或命令行参数的值", userName)
-	}
-
-	// 初始化账号Client
-	client, err := huaweiclient.CreateVpcClient(
-		auth.AuthList[userName].AccessKeyID,
-		auth.AuthList[userName].SecretAccessKey,
-		region,
-	)
-	if err != nil {
-		panic(err)
-	}
 
 	// 实例化 VPC 的 API 处理器
-	h := hwcvpc.NewVpcHandler(client)
+	v := vpc.NewVpcIPADdressGroup(VpcClient)
 
-	v := hwcvpc.NewVpcIPADdressGroup(h)
 	// 执行操作
 	switch operation {
 	case "list":
