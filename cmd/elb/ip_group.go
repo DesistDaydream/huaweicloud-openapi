@@ -36,7 +36,7 @@ func runIPGroup(cmd *cobra.Command, args []string) {
 	addrGroupName, _ := cmd.Flags().GetString("addr-group-name")
 	dryRun, _ := cmd.Flags().GetBool("dry-run")
 
-	e := ipaddressgroup.NewElbIPAddressGroup(ElbClient)
+	e := ipaddressgroup.NewElbIPAddressGroup(elbClient)
 	// 执行操作
 	switch operation {
 	case "list":

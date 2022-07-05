@@ -1,12 +1,8 @@
 package vpc
 
 import (
-	"os"
-
-	"github.com/DesistDaydream/huaweicloud-openapi/pkg/config"
-	"github.com/DesistDaydream/huaweicloud-openapi/pkg/logging"
+	"github.com/DesistDaydream/huaweicloud-openapi/pkg/huaweiclient"
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/vpc"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -28,37 +24,17 @@ func CreateCommand() *cobra.Command {
 }
 
 func vpcPersistentPreRun(cmd *cobra.Command, args []string) {
-	LogLevel, _ := cmd.Flags().GetString("log-level")
-	LogOutput, _ := cmd.Flags().GetString("log-output")
-	LogFormat, _ := cmd.Flags().GetString("log-format")
-	if err := logging.LogInit(LogLevel, LogOutput, LogFormat); err != nil {
-		logrus.Fatal("初始化日志失败", err)
-	}
-
-	authFile, _ := cmd.Flags().GetString("auth-file")
-	userName, err := cmd.Flags().GetString("username")
-	if err != nil {
-		logrus.Fatalln("请指定用户名")
-	}
-	region, _ := cmd.Flags().GetString("region")
-
-	// 检查 clientFlags.AuthFile 文件是否存在
-	if _, err := os.Stat(authFile); os.IsNotExist(err) {
-		logrus.Fatal("文件不存在")
-	}
-	// 获取认证信息
-	auth := config.NewAuthInfo(authFile)
-
-	// 判断传入的域名是否存在在认证信息中
-	if !auth.IsUserExist(userName) {
-		logrus.Fatalf("认证信息中不存在 %v 用户, 请检查认证信息文件或命令行参数的值", userName)
+	// 执行根命令的初始化操作
+	parent := cmd.Parent()
+	if parent.PersistentPreRun != nil {
+		parent.PersistentPreRun(parent, args)
 	}
 
 	// 初始化账号Client
 	client, err := vpc.NewVpcClient(
-		auth.AuthList[userName].AccessKeyID,
-		auth.AuthList[userName].SecretAccessKey,
-		region,
+		huaweiclient.Info.AK,
+		huaweiclient.Info.SK,
+		huaweiclient.Info.Region,
 	)
 	if err != nil {
 		panic(err)
