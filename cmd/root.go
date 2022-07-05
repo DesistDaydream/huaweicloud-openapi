@@ -1,7 +1,3 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
@@ -71,36 +67,36 @@ API 在线调试：https://apiexplorer.developer.huaweicloud.com/apiexplorer/ove
 // 执行每个 root 下的子命令时，都需要执行的函数
 func rootPersistentPreRun(cmd *cobra.Command, args []string) {
 	// 初始化日志
-	LogLevel, _ := cmd.Flags().GetString("log-level")
-	LogOutput, _ := cmd.Flags().GetString("log-output")
-	LogFormat, _ := cmd.Flags().GetString("log-format")
-	if err := logging.LogInit(LogLevel, LogOutput, LogFormat); err != nil {
+	logLevel, _ := cmd.Flags().GetString("log-level")
+	logOutput, _ := cmd.Flags().GetString("log-output")
+	logFormat, _ := cmd.Flags().GetString("log-format")
+	if err := logging.LogInit(logLevel, logOutput, logFormat); err != nil {
 		logrus.Fatal("初始化日志失败", err)
 	}
 
 	// 认证信息文件处理的相关逻辑
-	AuthFile, _ := cmd.Flags().GetString("auth-file")
-	UserName, err := cmd.Flags().GetString("username")
+	authFile, _ := cmd.Flags().GetString("auth-file")
+	userName, err := cmd.Flags().GetString("username")
 	if err != nil {
 		logrus.Fatalln("请指定用户名")
 	}
 	region, _ := cmd.Flags().GetString("region")
 
 	// 检查 clientFlags.AuthFile 文件是否存在
-	if _, err := os.Stat(AuthFile); os.IsNotExist(err) {
+	if _, err := os.Stat(authFile); os.IsNotExist(err) {
 		logrus.Fatal("文件不存在")
 	}
 	// 获取认证信息
-	auth := config.NewAuthInfo(AuthFile)
+	auth := config.NewAuthInfo(authFile)
 
 	// 判断传入的域名是否存在在认证信息中
-	if !auth.IsUserExist(UserName) {
-		logrus.Fatalf("认证信息中不存在 %v 用户, 请检查认证信息文件或命令行参数的值", UserName)
+	if !auth.IsUserExist(userName) {
+		logrus.Fatalf("认证信息中不存在 %v 用户, 请检查认证信息文件或命令行参数的值", userName)
 	}
 
 	huaweiclient.Info = &huaweiclient.ClientInfo{
-		AK:     auth.AuthList[UserName].AccessKeyID,
-		SK:     auth.AuthList[UserName].SecretAccessKey,
+		AK:     auth.AuthList[userName].AccessKeyID,
+		SK:     auth.AuthList[userName].SecretAccessKey,
 		Region: region,
 	}
 }

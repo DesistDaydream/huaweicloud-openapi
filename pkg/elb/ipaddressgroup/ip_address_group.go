@@ -10,20 +10,20 @@ import (
 )
 
 type ElbIPAddressGroup struct {
-	ElbHandler       *hwcelb.ElbClient
+	ElbClient        *hwcelb.ElbClient
 	AddressGroupName string
 }
 
-func NewElbIPAddressGroup(elbHandler *hwcelb.ElbClient) *ElbIPAddressGroup {
+func NewElbIPAddressGroup(elbClient *hwcelb.ElbClient) *ElbIPAddressGroup {
 	return &ElbIPAddressGroup{
-		ElbHandler: elbHandler,
+		ElbClient: elbClient,
 	}
 }
 
 // 列出所有 IP 地址组
 func (v *ElbIPAddressGroup) ListAddressGroup() {
 	request := &model.ListIpGroupsRequest{}
-	resp, err := v.ElbHandler.Client.ListIpGroups(request)
+	resp, err := v.ElbClient.Client.ListIpGroups(request)
 	if err != nil {
 		logrus.Errorln(err)
 	}
@@ -64,7 +64,7 @@ func (v *ElbIPAddressGroup) UpdateAddressGroup(name string, id string, ipList []
 		}
 	}
 
-	resp, err := v.ElbHandler.Client.UpdateIpGroup(request)
+	resp, err := v.ElbClient.Client.UpdateIpGroup(request)
 	if err != nil {
 		logrus.Errorf("更新失败: %v", err)
 	} else {
