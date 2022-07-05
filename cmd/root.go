@@ -10,6 +10,7 @@ import (
 	"github.com/DesistDaydream/huaweicloud-openapi/cmd/ecs"
 	"github.com/DesistDaydream/huaweicloud-openapi/cmd/elb"
 	"github.com/DesistDaydream/huaweicloud-openapi/cmd/vpc"
+	"github.com/DesistDaydream/huaweicloud-openapi/cmd/waf"
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/config"
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/huaweiclient"
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/logging"
@@ -61,6 +62,7 @@ API 在线调试：https://apiexplorer.developer.huaweicloud.com/apiexplorer/ove
 		vpc.CreateCommand(),
 		elb.CreateCommand(),
 		ecs.CreateCommand(),
+		waf.CreateCommand(),
 	)
 
 	return RootCmd
