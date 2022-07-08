@@ -89,7 +89,7 @@ func rootPersistentPreRun(cmd *cobra.Command, args []string) {
 	// 获取认证信息
 	auth := config.NewAuthInfo(authFile)
 
-	// 判断传入的域名是否存在在认证信息中
+	// 判断传入的用户是否存在在认证信息中
 	if !auth.IsUserExist(userName) {
 		logrus.Fatalf("认证信息中不存在 %v 用户, 请检查认证信息文件或命令行参数的值", userName)
 	}

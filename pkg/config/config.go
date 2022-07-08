@@ -29,7 +29,7 @@ func NewAuthInfo(file string) (auth *AuthConfig) {
 	return auth
 }
 
-// 判断文件中是否存在域名
+// 判断文件中是否存在用户
 func (c *AuthConfig) IsUserExist(userName string) bool {
 	if _, ok := c.AuthList[userName]; ok {
 		return true
