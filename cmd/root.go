@@ -9,9 +9,22 @@ import (
 	"github.com/DesistDaydream/huaweicloud-openapi/cmd/waf"
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/config"
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/huaweiclient"
-	"github.com/DesistDaydream/huaweicloud-openapi/pkg/logging"
-	"github.com/sirupsen/logrus"
+
 	"github.com/spf13/cobra"
+
+	logging "github.com/DesistDaydream/logging/pkg/logrus_init"
+	"github.com/sirupsen/logrus"
+)
+
+type Flags struct {
+	authFile string
+	userName string
+	region   string
+}
+
+var (
+	flags    Flags
+	logFlags logging.LogrusFlags
 )
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -39,19 +52,17 @@ https://developer.huaweicloud.com/openapilist
 API 在线调试：https://apiexplorer.developer.huaweicloud.com/apiexplorer/overview`
 
 	var RootCmd = &cobra.Command{
-		Use:              "huaweicloud-openapi",
-		Short:            "通过华为云 OpenAPI 管理资源的工具",
-		Long:             long,
-		PersistentPreRun: rootPersistentPreRun,
+		Use:   "huaweicloud-openapi",
+		Short: "通过华为云 OpenAPI 管理资源的工具",
+		Long:  long,
 	}
 
-	RootCmd.PersistentFlags().StringP("log-level", "", "info", "日志级别:[debug, info, warn, error, fatal]")
-	RootCmd.PersistentFlags().StringP("log-output", "", "", "日志输出位置，不填默认标准输出 stdout")
-	RootCmd.PersistentFlags().StringP("log-format", "", "text", "日志输出格式: [text, json]")
+	cobra.OnInitialize(initConfig)
+	logging.AddFlags(&logFlags)
 
-	RootCmd.PersistentFlags().StringP("auth-file", "f", "auth.yaml", "认证信息文件")
-	RootCmd.PersistentFlags().StringP("username", "u", "", "用户名")
-	RootCmd.PersistentFlags().StringP("region", "r", "cn-southwest-2", "地域")
+	RootCmd.PersistentFlags().StringVarP(&flags.authFile, "auth-file", "f", "auth.yaml", "认证信息文件")
+	RootCmd.PersistentFlags().StringVarP(&flags.userName, "username", "u", "", "用户名")
+	RootCmd.PersistentFlags().StringVarP(&flags.region, "region", "r", "cn-southwest-2", "地域")
 
 	// 添加子命令
 	RootCmd.AddCommand(
@@ -65,38 +76,29 @@ API 在线调试：https://apiexplorer.developer.huaweicloud.com/apiexplorer/ove
 }
 
 // 执行每个 root 下的子命令时，都需要执行的函数
-func rootPersistentPreRun(cmd *cobra.Command, args []string) {
+func initConfig() {
 	// 初始化日志
-	logLevel, _ := cmd.Flags().GetString("log-level")
-	logOutput, _ := cmd.Flags().GetString("log-output")
-	logFormat, _ := cmd.Flags().GetString("log-format")
-	if err := logging.LogInit(logLevel, logOutput, logFormat); err != nil {
+	if err := logging.LogrusInit(&logFlags); err != nil {
 		logrus.Fatal("初始化日志失败", err)
 	}
 
 	// 认证信息文件处理的相关逻辑
-	authFile, _ := cmd.Flags().GetString("auth-file")
-	userName, err := cmd.Flags().GetString("username")
-	if err != nil {
-		logrus.Fatalln("请指定用户名")
-	}
-	region, _ := cmd.Flags().GetString("region")
 
 	// 检查 clientFlags.AuthFile 文件是否存在
-	if _, err := os.Stat(authFile); os.IsNotExist(err) {
+	if _, err := os.Stat(flags.authFile); os.IsNotExist(err) {
 		logrus.Fatal("文件不存在")
 	}
 	// 获取认证信息
-	auth := config.NewAuthInfo(authFile)
+	auth := config.NewAuthInfo(flags.authFile)
 
 	// 判断传入的用户是否存在在认证信息中
-	if !auth.IsUserExist(userName) {
-		logrus.Fatalf("认证信息中不存在 %v 用户, 请检查认证信息文件或命令行参数的值", userName)
+	if !auth.IsUserExist(flags.userName) {
+		logrus.Fatalf("认证信息中不存在 %v 用户, 请检查认证信息文件或命令行参数的值", flags.userName)
 	}
 
 	huaweiclient.Info = &huaweiclient.ClientInfo{
-		AK:     auth.AuthList[userName].AccessKeyID,
-		SK:     auth.AuthList[userName].SecretAccessKey,
-		Region: region,
+		AK:     auth.AuthList[flags.userName].AccessKeyID,
+		SK:     auth.AuthList[flags.userName].SecretAccessKey,
+		Region: flags.region,
 	}
 }

@@ -3,6 +3,7 @@ module github.com/DesistDaydream/huaweicloud-openapi
 go 1.20
 
 require (
+	github.com/DesistDaydream/logging v0.0.1
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.32
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
