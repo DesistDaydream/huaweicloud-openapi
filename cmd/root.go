@@ -60,7 +60,7 @@ API 在线调试：https://apiexplorer.developer.huaweicloud.com/apiexplorer/ove
 	cobra.OnInitialize(initConfig)
 	logging.AddFlags(&logFlags)
 
-	RootCmd.PersistentFlags().StringVarP(&flags.authFile, "auth-file", "f", "auth.yaml", "认证信息文件")
+	RootCmd.PersistentFlags().StringVarP(&flags.authFile, "auth-file", "f", "pkg/config/my_auth.yaml", "认证信息文件")
 	RootCmd.PersistentFlags().StringVarP(&flags.userName, "username", "u", "", "用户名")
 	RootCmd.PersistentFlags().StringVarP(&flags.region, "region", "r", "cn-southwest-2", "地域")
 
