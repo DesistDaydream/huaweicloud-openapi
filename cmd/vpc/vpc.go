@@ -3,6 +3,7 @@ package vpc
 import (
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/huaweiclient"
 	"github.com/DesistDaydream/huaweicloud-openapi/pkg/vpc"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -24,6 +25,8 @@ func CreateCommand() *cobra.Command {
 }
 
 func vpcPersistentPreRun(cmd *cobra.Command, args []string) {
+	var err error
+
 	// 执行根命令的初始化操作
 	parent := cmd.Parent()
 	if parent.PersistentPreRun != nil {
@@ -31,14 +34,12 @@ func vpcPersistentPreRun(cmd *cobra.Command, args []string) {
 	}
 
 	// 初始化账号Client
-	client, err := vpc.NewVpcClient(
+	VpcClient, err = vpc.NewVpcClient(
 		huaweiclient.Info.AK,
 		huaweiclient.Info.SK,
 		huaweiclient.Info.Region,
 	)
 	if err != nil {
-		panic(err)
+		logrus.Fatalf("初始化华为云 VPC 客户端异常，原因: %v", err)
 	}
-
-	VpcClient = client
 }
