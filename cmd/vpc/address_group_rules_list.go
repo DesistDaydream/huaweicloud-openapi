@@ -22,8 +22,7 @@ func IPGroupRulesListCommand() *cobra.Command {
 
 // 列出所有 IP 地址组
 func runAddressGroupRulesList(cmd *cobra.Command, args []string) {
-
-	agID, err := findIpGroupID(addressGroupFlags.addrGroupName)
+	agID, err := findAddressGroupID(addressGroupFlags.addrGroupName)
 	if err != nil {
 		logrus.Fatalf("%v", err)
 	}
@@ -38,5 +37,4 @@ func runAddressGroupRulesList(cmd *cobra.Command, args []string) {
 	for _, ip := range showAddressGroupResponse.AddressGroup.IpSet {
 		fmt.Println(ip)
 	}
-
 }
