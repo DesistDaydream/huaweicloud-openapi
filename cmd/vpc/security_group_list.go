@@ -27,7 +27,7 @@ func runSecurityGroupList(cmd *cobra.Command, args []string) {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"ID", "名称", "描述"})
 
-	listSecurityGroupsResponse, err := VpcClient.Client.ListSecurityGroups(&model.ListSecurityGroupsRequest{})
+	listSecurityGroupsResponse, err := vpcClient.Client.ListSecurityGroups(&model.ListSecurityGroupsRequest{})
 	if err != nil {
 		logrus.Fatalf("列出安全组异常，原因: %v", err)
 	}

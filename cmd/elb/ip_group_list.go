@@ -1,9 +1,10 @@
 package elb
 
 import (
-	"fmt"
+	"os"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/model"
+	"github.com/olekukonko/tablewriter"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -26,12 +27,15 @@ func runIpGroupList(cmd *cobra.Command, args []string) {
 	if err != nil {
 		logrus.Errorln(err)
 	}
+
 	logrus.Infof("当前共有 %v 个 IP 地址组", resp.PageInfo.CurrentCount)
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"SG-ID", "名称", "描述"})
+
 	for _, g := range *resp.Ipgroups {
-		logrus.Infof("【%v】地址组地址列表：", g.Name)
-		for _, ip := range g.IpList {
-			fmt.Println(ip.Ip, ip.Description)
-		}
+		table.Append([]string{g.Id, g.Name, g.Description})
 	}
 
+	table.Render()
 }

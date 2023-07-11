@@ -10,19 +10,19 @@ import (
 )
 
 func IPGroupUpdateCommand() *cobra.Command {
-	var ipGroupUpdateCmd = &cobra.Command{
+	var addressGroupUpdateCmd = &cobra.Command{
 		Use:   "update",
 		Short: "更新 VPC 中指定的 IP 地址组",
-		Run:   runIpGroupUpdate,
+		Run:   runAddressGroupUpdate,
 		Args:  cobra.NoArgs,
 	}
 
-	return ipGroupUpdateCmd
+	return addressGroupUpdateCmd
 }
 
 // 全量更新 IP 地址组(若 IP 地址组中存在 Excel 中不存在的 IP 地址，则删除)
-func runIpGroupUpdate(cmd *cobra.Command, args []string) {
-	ipset, id, err := fileparse.GetVpcIPaddrGroup(ipGroupFlags.ipsFile, ipGroupFlags.addrGroupName)
+func runAddressGroupUpdate(cmd *cobra.Command, args []string) {
+	ipset, id, err := fileparse.GetVpcIPaddrGroup(addressGroupFlags.ipsFile, addressGroupFlags.addrGroupName)
 	if err != nil {
 		logrus.Fatalf("解析文件失败: %v", err)
 	}
@@ -31,10 +31,10 @@ func runIpGroupUpdate(cmd *cobra.Command, args []string) {
 	request.AddressGroupId = id
 	request.Body = &model.UpdateAddressGroupRequestBody{
 		AddressGroup: &model.UpdateAddressGroupOption{
-			Name:  &ipGroupFlags.addrGroupName,
+			Name:  &addressGroupFlags.addrGroupName,
 			IpSet: &ipset,
 		},
-		DryRun: &ipGroupFlags.dryRun,
+		DryRun: &addressGroupFlags.dryRun,
 	}
 
 	for _, ip := range ipset {
@@ -42,8 +42,8 @@ func runIpGroupUpdate(cmd *cobra.Command, args []string) {
 	}
 
 	// 如果 dryRun 为 false，则手动确认是否执行
-	if !ipGroupFlags.dryRun {
-		logrus.Infof("请确认是否要更新【%v】地址组，输入y/Y确认，输入其他键退出", ipGroupFlags.addrGroupName)
+	if !addressGroupFlags.dryRun {
+		logrus.Infof("请确认是否要更新【%v】地址组，输入y/Y确认，输入其他键退出", addressGroupFlags.addrGroupName)
 		var input string
 		_, _ = fmt.Scanln(&input)
 		if input != "y" && input != "Y" {
@@ -53,7 +53,7 @@ func runIpGroupUpdate(cmd *cobra.Command, args []string) {
 	}
 
 	// 执行操作，更新地址组
-	resp, err := VpcClient.Client.UpdateAddressGroup(request)
+	resp, err := vpcClient.Client.UpdateAddressGroup(request)
 	if err != nil {
 		logrus.Errorf("更新失败: %v", err)
 	} else {

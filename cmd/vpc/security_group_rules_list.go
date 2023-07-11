@@ -20,14 +20,14 @@ func CreateSecurityGroupRulesListCmd() *cobra.Command {
 }
 
 func runSecurityGroupRulesList(cmd *cobra.Command, args []string) {
-	listSecurityGroupsResponse, err := VpcClient.Client.ListSecurityGroups(&model.ListSecurityGroupsRequest{})
+	listSecurityGroupsResponse, err := vpcClient.Client.ListSecurityGroups(&model.ListSecurityGroupsRequest{})
 	if err != nil {
 		logrus.Fatalf("列出安全组异常，原因: %v", err)
 	}
 
 	for _, sg := range *listSecurityGroupsResponse.SecurityGroups {
 		if sg.Name == sgFlags.sgName {
-			showSecurityGroupResponse, err := VpcClient.Client.ShowSecurityGroup(&model.ShowSecurityGroupRequest{
+			showSecurityGroupResponse, err := vpcClient.Client.ShowSecurityGroup(&model.ShowSecurityGroupRequest{
 				SecurityGroupId: sg.Id,
 			})
 			if err != nil {

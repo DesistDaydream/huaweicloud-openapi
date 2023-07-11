@@ -13,7 +13,7 @@ type SecurityGroupCmdFlags struct {
 
 var sgFlags SecurityGroupCmdFlags
 
-func CreateSecurityGroupCommand() *cobra.Command {
+func CreateSecurityGroupCmd() *cobra.Command {
 	long := `操作 VPC 下的安全组资源：
 	list 列出所有安全组及其规则
 	show 列出指定安全组的规则`

@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var VpcClient *vpc.VpcClient
+var vpcClient *vpc.VpcClient
 
 func CreateCommand() *cobra.Command {
 	VpcCmd := &cobra.Command{
@@ -17,8 +17,8 @@ func CreateCommand() *cobra.Command {
 	}
 
 	VpcCmd.AddCommand(
-		CreateIPGroupCommand(),
-		CreateSecurityGroupCommand(),
+		CreateAddressGroupCmd(),
+		CreateSecurityGroupCmd(),
 	)
 
 	return VpcCmd
@@ -34,7 +34,7 @@ func vpcPersistentPreRun(cmd *cobra.Command, args []string) {
 	}
 
 	// 初始化账号Client
-	VpcClient, err = vpc.NewVpcClient(
+	vpcClient, err = vpc.NewVpcClient(
 		huaweiclient.Info.AK,
 		huaweiclient.Info.SK,
 		huaweiclient.Info.Region,
